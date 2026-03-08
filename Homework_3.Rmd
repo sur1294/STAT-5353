@@ -1,0 +1,378 @@
+---
+title: "Homework_3"
+author: "Surbhi Kumar"
+date: "2026-02-27"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+#PROBLEM 1
+
+```{r}
+cat("Problem 1\n\n")
+
+library(palmerpenguins)
+library(ggplot2)
+
+# (a)
+cat("\n (a) \n")
+
+#Turn the variable species and island into a factor variable.
+
+penguins$species <- as.factor(penguins$species)
+penguins$island <- as.factor(penguins$island)
+str(penguins[, c("species", "island")])
+
+# (b)
+cat("\n (b) \n")
+
+#Make a scatter plot between flipper length and bill length, indicating species by color
+
+ggplot(penguins, aes(flipper_length_mm, bill_length_mm, color = species)) +
+       geom_point(size = 3) +
+       labs(title = "Flipper Length vs Bill Length", x = "Flipper Length", y = "Bill Length")+         theme_minimal()
+
+# (c)
+cat("\n (c) \n")
+
+# Compute the Pearson correlation coefficient between flipper length and bill length.
+
+pc <- cor(penguins$flipper_length_mm, penguins$bill_length_mm, method = "pearson", use = "complete.obs")
+
+cat("Pearson correlation coefficient between flipper length and bill length is:", pc)
+
+# (d)
+cat("\n (d) \n")
+
+# Create three separate data sets by subsetting the penguins dataset in terms of the variable species.
+
+s1 <- subset(penguins, species == "Adelie" )
+s2 <- subset(penguins, species == "Gentoo" )
+s3 <- subset(penguins, species == "Chinstrap" )
+head(s1)
+head(s2)
+head(s3)
+
+# (e)
+cat("\n (e) \n")
+
+# Compute the Pearson correlation coefficient between flipper length and bill length, separately for each Species.
+
+pc_1 <- cor(s1$flipper_length_mm, s1$bill_length_mm, method = "pearson", use = "complete.obs")
+cat("Pearson correlation coefficient between flipper length and bill length of Adelie is:", pc_1,"\n")
+
+pc_2 <- cor(s2$flipper_length_mm, s2$bill_length_mm, method = "pearson", use = "complete.obs")
+cat("Pearson correlation coefficient between flipper length and bill length of Gentoo is:", pc_2,"\n")
+
+pc_3 <- cor(s3$flipper_length_mm, s3$bill_length_mm, method = "pearson", use = "complete.obs")
+cat("Pearson correlation coefficient between flipper length and bill length of Chinstrap is:", pc_3,"\n")
+
+# (f)
+cat("\n (f) \n")
+
+# Recreate the plot from part (b), adding the trend lines for each species separately
+
+ggplot(penguins, aes(flipper_length_mm, bill_length_mm, color = species)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Flipper Length vs Bill Length with Trend Lines", x = "Flipper Length", y = "Bill Length")
+
+# (g)
+cat("\n (g) \n")
+
+#Find the mean and the median of body mass of penguin in the three islands, and round the answer to two decimal places.
+
+mean_tor <- round(mean(penguins$body_mass_g[penguins$island == "Torgersen"], na.rm = TRUE),2)
+
+mean_bis <- round(mean(penguins$body_mass_g[penguins$island == "Biscoe"], na.rm = TRUE),2)
+
+mean_dr <- round(mean(penguins$body_mass_g[penguins$island == "Dream"], na.rm = TRUE),2)
+
+median_tor <- round(median(penguins$body_mass_g[penguins$island == "Torgersen"], na.rm = TRUE),2)
+
+median_bis <- round(median(penguins$body_mass_g[penguins$island == "Biscoe"], na.rm = TRUE),2)
+
+median_dr <- round(median(penguins$body_mass_g[penguins$island == "Dream"], na.rm = TRUE),2)
+
+cat("The mean  body mass of penguin in the Torgersen island is",mean_tor,", and the median body mass is",median_tor,".\n")
+
+cat("The mean  body mass of penguin in the Biscoe island is",mean_bis,", and the median body mass is",median_bis,".\n")
+
+cat("The mean  body mass of penguin in the Dream island is",mean_dr,", and the median body mass is",median_dr,".\n")
+
+# (h)
+cat("\n (h) \n")
+
+# Make density curves of the bill depth for all the three species in one plot
+
+ggplot(penguins, aes(x = bill_depth_mm, color = species, fill = species)) +
+  geom_density(alpha = 0.3, na.rm = TRUE) +
+  labs(title = "Density Curves of Bill Depth by Species", x = "Bill Depth (mm)", y = "Density")+
+  theme_minimal()
+
+# (i)
+cat("\n (i) \n")
+
+# Make a boxplot and a violin plot of the body mass for all the three species, respectively.
+
+ggplot(penguins, aes(x = species, y = body_mass_g, fill = species)) +
+  geom_boxplot(na.rm = TRUE) +
+  labs(title = "Boxplot of Body Mass by Species", x = "Species", y = "Body Mass (g)") +
+  theme_minimal() 
+
+ggplot(penguins, aes(x = species, y = body_mass_g, fill = species)) +
+  geom_violin(na.rm = TRUE, trim = FALSE) +
+  labs(title = "Violin Plot of Body Mass by Species", x = "Species", y = "Body Mass (g)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+# (j)
+cat("\n (j) \n")
+
+# Make a stacked bar plot to show the relationship between species and sex variables.
+
+ggplot(penguins, aes(x = species, fill = sex)) +
+  geom_bar(na.rm = TRUE) +
+  labs(title = "Stacked Bar Plot of Species and Sex", x = "Species", y = "Count",fill = "Sex") +
+  theme_minimal()
+
+```
+#PROBLEM 2
+
+```{r}
+cat("Problem 2\n\n")
+
+heart <- read.csv("heart.csv", stringsAsFactors = FALSE)
+str(heart)
+
+# (a)
+cat("\n (a) \n")
+
+# Turn the variable thal into a factor variable
+unique(heart$thal)
+heart$thal <- as.factor(heart$thal)
+
+str(heart[, "thal"])
+
+# (b)
+cat("\n (b) \n")
+
+# turn the variable cp into a factor variable with four labels: “Typ”, “Aty”, “Non”, and “Asy”.
+
+unique(heart$cp)
+
+heart$cp <- factor( heart$cp, levels = c(0,1,2,3), labels = c("Typ", "Aty", "Non", "Asy"))
+
+str(heart[, "cp"])
+
+# (c)
+cat("\n (c) \n")
+
+# Create a new factor variable cholesterol level based on cholesterol levels for adults, where levels below 200 mg/dL are considered “Desirable,” levels between 200 and 239 mg/dL are considered “Medium” (borderline high), and levels of 240 mg/dL and above are considered “High”.
+
+heart$chol_level <- cut(
+  heart$chol,
+  breaks <- c(-Inf, 200, 240, Inf),
+  labels <- c("Desirable", "Medium", "High"),
+  right <- FALSE
+)
+
+str(heart[, "chol_level"])
+
+# (d)
+cat("\n (d) \n")
+
+# (d) Create a new factor variable blood level based on resting blood pressure levels for adults, where levelsbelow 120 mm Hg are considered “Normal” systolic, levels between 120 and 139 mmHg are considered”At Risk” (prehypertension) systolic, and levels of 140 mmHg or higher are considered “High” (blood pressure hypertension systolic)
+
+heart$blood_level <- cut(
+  heart$trestbps,
+  breaks <- c(-Inf, 120, 139, Inf),
+  labels <- c("Normal", "At Risk", "High" ),
+  right <- FALSE
+)
+
+str(heart[, "blood_level"])
+
+# (e)
+cat("\n (e) \n")
+# Draw a bar plot of the variable thal and arrange the bars in decreasing order in terms of the number of patients.
+
+
+ggplot(heart, aes(x= reorder(thal, -table(thal)[thal])))+
+  geom_bar(na.rm = TRUE)+
+  labs(title = " Bar Plot of Thal", x ="Thal", y= "Count")+
+  theme_minimal()
+
+# (f)
+cat("\n (f) \n")
+
+# Make a boxplot of cholesterol levels for female and males patients, respectively, and report their means, medians, standard deviations, and IQRs.
+heart$sex <- factor(heart$sex,
+                    levels = c(0,1),
+                    labels = c("Female", "Male"))
+
+ggplot(heart, aes(x = sex, y = chol, fill = sex)) +
+  geom_boxplot(na.rm = TRUE) +
+  labs(title = "Boxplot of Cholesterol Levels by Sex", x = "Sex", y = "Cholesterol (mg/dL)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+mean_chol_fe <- round(mean(heart$chol[heart$sex == "Female"], na.rm = TRUE), 2)
+mean_chol_ma <- round(mean(heart$chol[heart$sex == "Male"], na.rm = TRUE), 2)
+
+median_chol_fe <- round(median(heart$chol[heart$sex == "Female"], na.rm = TRUE), 2)
+median_chol_ma <- round(median(heart$chol[heart$sex == "Male"], na.rm = TRUE), 2)
+
+sd_chol_fe <- round(sd(heart$chol[heart$sex == "Female"], na.rm = TRUE), 2)
+sd_chol_ma <- round(sd(heart$chol[heart$sex == "Male"], na.rm = TRUE), 2)
+
+IQR_chol_fe <- round(IQR(heart$chol[heart$sex == "Female"], na.rm = TRUE), 2)
+IQR_chol_ma <- round(IQR(heart$chol[heart$sex == "Male"], na.rm = TRUE), 2)
+
+cat("Female Patients:\n")
+cat("Mean:", mean_chol_fe, "\n")
+cat("Median:", median_chol_fe, "\n")
+cat("Standard Deviation:", sd_chol_fe, "\n")
+cat("IQR:", IQR_chol_fe, "\n\n")
+
+cat("Male Patients:\n")
+cat("Mean:", mean_chol_ma, "\n")
+cat("Median:", median_chol_ma, "\n")
+cat("Standard Deviation:", sd_chol_ma, "\n")
+cat("IQR:", IQR_chol_ma, "\n")
+
+
+# (g)
+cat("\n (g) \n")
+
+# Make a histogram of resting blood pressures for female and male patients, respectively, and describe their shapes.
+
+ggplot(heart, aes(x = trestbps)) +
+  geom_histogram(bins = 50, fill = "skyblue", color = "black", na.rm = TRUE) +
+  facet_wrap(~ sex) +
+  labs(title = "Histogram of Resting Blood Pressure by Sex",
+       x = "Resting Blood Pressure (mmHg)",
+       y = "Frequency") +
+  theme_minimal()
+
+```
+
+#PROBLEM 3
+
+```{r}
+cat("Problem 3\n\n")
+head(diamonds)
+# (a)
+cat("\n (a) \n")
+
+# Turn the variables cut, color, clarity into factor variables
+
+diamonds$cut <- as.factor(diamonds$cut)
+diamonds$color <- as.factor(diamonds$color)
+diamonds$clarity <- as.factor(diamonds$clarity)
+
+str(diamonds[, c("cut", "color", "clarity")])
+
+
+# (b)
+cat("\n (b) \n")
+
+# Calculate the Pearson correlation coefficient between price and each of the variables carat, depth, table, price, x, y, and z
+
+vars <- c("carat", "depth", "table", "price", "x", "y", "z")
+
+cor_results <- sapply(vars, function(v) {
+  cor(diamonds$price, diamonds[[v]], method = "pearson")
+})
+
+cat("Pearson correlation coefficient between price and each of the variables carat, depth, table, price, x, y, and z: \n \n")
+
+cor_results
+
+# (c)
+# Make a bar plot of the resulting correlations in part (b) and arrange the variables in decreasing order in terms of their correlation with the price.
+
+cor_df <- data.frame(variable = names(cor_results), correlation = cor_results)
+
+ggplot(cor_df,aes(x = reorder(variable, -correlation), y = correlation)) +
+  geom_bar(stat = "identity", fill = "turquoise") +
+  labs(title = "Correlation with Price",x = "Variable",y = "Pearson Correlation") +
+  theme_minimal()
+
+# (d)
+cat("\n (d) \n")
+
+# Make a scatter plot where y-axis represents price and x-axis represents the variable with the largest Pearson correlation coefficient to carat. Add a trend line and interpret the meanings of intercept and slope in this context.
+
+vars2 <- c("depth", "table", "price", "x", "y", "z")
+
+cor_carat <- sapply(vars2, function(v) {
+  cor(diamonds$carat, diamonds[[v]], method = "pearson")
+})
+
+round(cor_carat, 4)
+
+ggplot(diamonds, aes(x = x, y = price)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method = "lm", color = "red") +
+  labs(title = "Price vs x (Length of Diamond)", x = "x (mm)", y = "Price (USD)") +
+  theme_minimal()
+
+# (e)
+cat("\n (e) \n")
+
+# The main colors of the diamonds are G, E and F, since they have larger numbers of samples than any others. Make density curves of price to compare with color in one plot and describe their shapes,respectively.
+
+dim_sub <- subset(diamonds, color %in% c("G", "E", "F"))
+
+ggplot(dim_sub, aes(x = price, color = color, fill = color)) +
+  geom_density(alpha = 0.3) +
+  labs(title = "Density Curves of Price for Colors G, E, and F", x = "Price (USD)",y =     "Density") +
+  theme_minimal()
+
+
+# (f)
+cat("\n (f) \n")
+
+# Make three side-by-side box plots to compare price of diamond among the categorical variable, including color, cut, and clarity.
+
+ggplot(diamonds, aes(x = color, y = price, fill = color)) +
+  geom_boxplot() +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Price by Color")
+
+ggplot(diamonds, aes(x = cut, y = price, fill = cut)) +
+  geom_boxplot() +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Price by Cut")
+
+ggplot(diamonds, aes(x = clarity, y = price, fill = clarity)) +
+  geom_boxplot() +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Price by Clarity")
+
+# (g)
+cat("\n (g) \n")
+
+# Make a stacked bar plot to show the relationship between color and cut.
+
+ggplot(diamonds, aes(x = color, fill = cut)) +
+  geom_bar(position = "stack") +
+  labs(title = "Stacked Bar Plot of Color and Cut", x = "Color", y = "Count", fill = "Cut") +
+  theme_minimal()
+
+```
+
+(d)
+As x increases, price increases.
+
+(e)
+The density curves for colors G, E, and F are all right-skewed and unimodal. Most diamond prices are concentrated in the lower price range, with a long tail extending toward higher prices. Although the general shape of the distributions is similar across the three colors, slight differences in concentration and spread are observed, with color E showing a higher peak at lower prices
+
+
+
