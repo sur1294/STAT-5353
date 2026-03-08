@@ -1,0 +1,320 @@
+---
+title: "HOMEWORK_2"
+author: "Surbhi Kumar"
+date: "2026-02-22"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#PROBLEM 1
+```{r}
+cat("Problem 1\n\n")
+sleep <- read.csv("Sleep_health_and_lifestyle_dataset.csv", stringsAsFactors = FALSE)
+str(sleep)
+
+# (a)
+cat("\n (a) \n")
+
+# Turn the variablesinto factor variables
+
+sleep$Gender <- as.factor(sleep$Gender)
+
+sleep$Occupation <- as.factor(sleep$Occupation)
+
+sleep$BMI.Category <- as.factor(sleep$BMI.Category)
+
+sleep$Sleep.Disorder <- as.factor(sleep$Sleep.Disorder)
+
+str(sleep[, c("Gender", "Occupation", "BMI.Category", "Sleep.Disorder")])
+
+# (b)
+cat("\n (b) \n")
+
+#Fixing BMI
+
+sleep$BMI.Category <- as.character(sleep$BMI.Category)
+
+sleep$BMI.Category[sleep$BMI.Category == "Normal Weight"] <- "Normal"
+
+sleep$BMI.Category[sleep$BMI.Category == "Overweight"] <- "Obese"
+
+sleep$BMI.Category <- as.factor(sleep$BMI.Category)
+
+str(sleep[, c( "BMI.Category")])
+
+
+# (c)
+cat("\n (c) \n")
+
+# CREATING SUBSET
+
+sleep_sub <- subset(sleep, Occupation %in% c("Doctor", "Nurse", "Scientist"))
+
+sleep_sub$Person.ID <- NULL
+
+table(sleep_sub$Occupation)
+
+# (d)
+cat("\n (d) \n")
+
+# Calculate the average sleep duration in the subset data
+
+avg_sleep <- mean(sleep_sub$Sleep.Duration, na.rm = TRUE)
+cat("Average sleep duration in the subset data:", round(avg_sleep, 1))
+```
+
+#PROBLEM 2
+
+```{r}
+
+cat("Problem 2\n\n")
+heart <- read.csv("heart.csv", stringsAsFactors = FALSE)
+str(heart)
+
+# (a)
+cat("\n (a) \n")
+#  Create a variable called id and and assign an patient ID number from 1 to 1025 
+
+heart$id <- seq_len(nrow(heart))
+
+cat("head of heart_id:", head(heart$id), "\n")
+cat("tail of heart_id:", tail(heart$id), "\n")
+
+
+# (b)
+cat("\n (b) \n")
+# Turn the variables target, fbs, and exang into logical variables
+
+heart$target <- as.logical(heart$target)
+
+heart$fbs <- as.logical(heart$fbs)
+
+heart$exang <- as.logical(heart$exang)
+
+str(heart[, c("target", "fbs", "exang")])
+
+
+# (c)
+cat("\n (c) \n")
+# Turn the variable cp into a factor variable with levels labeled as “typical”, “atypical ”, “non-angina” and “asymptomatic.”
+
+heart$cp <- factor( heart$cp, levels = c(0,1,2,3), labels = c("typical", "atypical", "non-angina", "asymptomatic"))
+
+table(heart$cp)
+
+# (d)
+cat("\n (d) \n")
+
+#  mean cholesterol level of patients with fasting blood sugar greater than 120 mg/dl
+
+mean_chol_true <- mean(heart$chol[heart$fbs == TRUE], na.rm = TRUE)
+
+cat("Mean cholesterol level of patients with fasting blood sugar greater than 120 mg/dl: ", round(mean_chol_true, 2),"\n")
+
+# mean cholesterol level of patients with fasting blood sugar less than or equal to 120 mg/dl
+
+mean_chol_false <- mean(heart$chol[heart$fbs == FALSE], na.rm = TRUE)
+
+cat("Mean cholesterol level of patients with fasting blood sugar less than or equal to 120 mg/dl: ", round(mean_chol_false, 2),"\n")
+
+# (e)
+cat("\n (e) \n")
+
+# Number of patients have both a more chance of heart and exercise-induced angina
+
+count_more_and_exang <- sum(heart$target == TRUE & heart$exang == TRUE, na.rm = TRUE)
+
+cat("Number of patients have both a more chance of heart and exercise-induced angina: ", count_more_and_exang, "\n")
+
+# Number of patients  have both a less chance of heart attack and exercise-induced angina
+
+count_less_and_exang <- sum(heart$target == FALSE & heart$exang == TRUE, na.rm = TRUE)
+
+cat("Number of patients  have both a less chance of heart attack and exercise-induced angina: ", count_less_and_exang, "\n")
+
+# (f)
+cat("\n (f) \n")
+
+# Number of patients have a more chance of heart attack but do not have exercise induced angina
+
+count_more_and_notexang <- sum(heart$target == TRUE & heart$exang == FALSE, na.rm = TRUE)
+
+cat("Number of patients have a more chance of heart attack but do not have exercise induced angina: ", count_more_and_notexang, "\n")
+
+
+# Number of patients have a less chance of heart attack but do not have exercise induced angina
+
+count_less_and_notexang <- sum(heart$target == FALSE & heart$exang == FALSE, na.rm = TRUE)
+
+cat("Number of patients have a less chance of heart attack but do not have exercise induced angina: ", count_less_and_notexang, "\n")
+
+
+# (g)
+cat("\n (g) \n")
+
+# Number of patients in this data set have a more chance of heart attack
+
+count_more <- sum(heart$target == TRUE, na.rm = TRUE)
+
+cat("Number of patients in this data set have a more chance of heart attack: ", count_more, "\n")
+
+# proportion of these patients who experience “typical angina” chest pain
+
+prop_typical_more <- mean(heart$cp[heart$target == TRUE] == "typical", na.rm = TRUE)
+
+cat("Proportion of these patients who experience “typical angina” chest pain: ", round(prop_typical_more, 4), "\n")
+
+
+# (h)
+cat("\n (h) \n")
+
+# Number of patients in this data set have a less chance of heart attack
+
+count_less <- sum(heart$target == FALSE, na.rm = TRUE)
+
+cat("Number of patients in this data set have a less chance of heart attack: ", count_less, "\n")
+
+# proportion of these patients who experience “typical angina” chest pain
+
+prop_typical_less <- mean(heart$cp[heart$target == FALSE] == "typical", na.rm = TRUE)
+
+cat("Proportion of these patients who experience “typical angina” chest pain: ", round(prop_typical_less, 4), "\n")
+
+
+```
+
+
+#PROBLEM 3
+
+```{r}
+
+cat("Problem 3\n\n")
+
+library(survival)
+data(cancer, package="survival")
+str(lung)
+
+# (a)
+cat("\n (a) \n")
+# Convert the variable status into a factor variable with appropriate labels.
+
+lung$status <- factor(lung$status, levels = c(1, 2), labels = c("censored", "dead"))
+
+table(lung$status)
+
+# (b)
+cat("\n (b) \n")
+#  youngest and oldest age of a deceased patient
+
+
+dead_ages <- lung$age[lung$status == "dead"]
+
+cat("Youngest age of a deceased patient: ", min(dead_ages, na.rm = TRUE),"\n")
+cat("Oldest age of a deceased patient: ", max(dead_ages, na.rm = TRUE),"\n")
+
+
+# (c)
+cat("\n (c) \n")
+
+cat("Number of missing values in ph.ecog: ", sum(is.na(lung$ph.ecog)), "\n")
+
+cat("Number of missing values in ph.karno: ", sum(is.na(lung$ph.karno)), "\n")
+
+cat("Number of missing values in pat.karno: ", sum(is.na(lung$pat.karno)), "\n")
+
+
+# (d)
+cat("\n (d) \n")
+
+# Impute the missing values in the variables ph.ecog, ph.karno, and pat.karno with their most frequent performance scores.
+
+get_mode <- function(x) {
+  x_non_missing <- x[!is.na(x)]
+  tab <- table(x_non_missing)
+  as.numeric(names(tab)[which.max(tab)])
+}
+
+mode_ph_ecog <- get_mode(lung$ph.ecog)
+mode_ph_karno <- get_mode(lung$ph.karno)
+mode_pat_karno <- get_mode(lung$pat.karno)
+
+lung$ph.ecog[is.na(lung$ph.ecog)] <- mode_ph_ecog
+lung$ph.karno[is.na(lung$ph.karno)] <- mode_ph_karno
+lung$pat.karno[is.na(lung$pat.karno)] <- mode_pat_karno
+
+cat("Number of missing values in ph.ecog: ", sum(is.na(lung$ph.ecog)), "\n")
+
+cat("Number of missing values in ph.karno: ", sum(is.na(lung$ph.karno)), "\n")
+
+cat("Number of missing values in pat.karno: ", sum(is.na(lung$pat.karno)), "\n")
+
+# (e)
+cat("\n (e) \n")
+
+cat("Number of missing values in meal.cal: ", sum(is.na(lung$meal.cal)), "\n")
+
+# For each ph.karno group, replace NA meal.cal with the group's mean meal.cal
+
+meal_means <- tapply(lung$meal.cal, lung$ph.karno, mean, na.rm = TRUE)
+
+idx_na_meal <- which(is.na(lung$meal.cal))
+
+lung$meal.cal[idx_na_meal] <- meal_means[as.character(lung$ph.karno[idx_na_meal])]
+
+cat("Check number of missing values in ph.ecog after replacement : ", sum(is.na(lung$meal.cal)), "\n")
+```
+
+
+#PROBLEM 4
+```{r}
+cat("Problem 4\n\n")
+
+library(survival)
+
+data(cancer, package="survival")
+
+str(kidney)
+
+# (a)
+cat("\n (a) \n")
+
+#Find the number of female patients with PKD
+
+count_female_pkd <- sum(kidney$sex == 2 & kidney$disease == "PKD", na.rm = TRUE)
+
+cat("Number of female patients with PKD: ", count_female_pkd, "\n")
+
+# (b)
+cat("\n (b) \n")
+
+# Find the number of patients with GN or AN who are between 10 and 30 years old.
+
+count_gn_an <- sum(kidney$disease %in% c("GN", "AN") & kidney$age >= 10 & kidney$age <= 30, na.rm = TRUE )
+
+cat("Number of patients with GN or AN who are between 10 and 30 years old: ", count_gn_an, "\n")
+
+# (c)
+cat("\n (c) \n")
+
+# average frailty for patients with GN
+
+avg_frail_gn <- mean(kidney$frail[kidney$disease == "GN"], na.rm = TRUE)
+
+cat("Average frailty for patients with GN: ", round(avg_frail_gn, 2), "\n")
+
+# median of frailty for patients with AN
+
+med_frail_an <- median(kidney$frail[kidney$disease == "AN"], na.rm = TRUE)
+
+cat("Median of frailty for patients with AN: ", round(med_frail_an, 2), "\n" )
+
+# IQR of frailty for patients with polycystic kidney disease
+
+iqr_frail_pkd <- IQR(kidney$frail[kidney$disease == "PKD"], na.rm = TRUE)
+
+cat("IQR of frailty for patients with polycystic kidney disease: ", round(iqr_frail_pkd, 2), "\n" )
+
+```
